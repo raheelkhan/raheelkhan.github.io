@@ -8,7 +8,7 @@ comments: true
 
 Recently I get a chance to use Apache ActiveMQ in one or our services. One of the conditions that we have is that the ActiveMQ server is behind a load balancer. This makes keeping long running connection to the ActiveMQ server impossible as AWS load balancer default times out in 60s if there is no data transfer happens between the two parties.
 
-##Solution
+## Solution
 
 In order to keep the connection active and to be able to instantly receive any message in the subscribed queue we must enable a ping / pong mechanism. In ApacheMQ context it is known as Heart Beat.
 
