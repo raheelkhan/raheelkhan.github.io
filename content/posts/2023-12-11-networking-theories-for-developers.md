@@ -26,19 +26,49 @@ The network layer is a postal company. It carries all the envolopes for a compan
 
 Once the envelopes are present in the company's mail room, the Transport layers kicks in. It knows the department (Ports and Protocols). It takes the envelope, see the port number (department) and route the envelopes to those deparatments.
 
-### Types of IP traffic
+### Types Of IP traffic
 Hosts in networking means any connecting device to a certain network. This includes PC, printers, mobiles etc.
 
-
-#### Unicast
-Goes to single destination host
-#### Broadcast
-Goes to all hosts in on the subnet. It only works within the subnet. It is intentionally dropped by the router otherwise a single message will be flooded over to the entire internet.
-#### Multicast
-Goes to interested multiple hosts. Think of a radio channel. The radio station sends the audio content to all the hosts who tuned in to that particular radio channel. The condition here that the receiver must request the traffic.
+- Unicast -> Goes to single destination host
+- Broadcast -> Goes to all hosts in on the subnet. It only works within the subnet. It is intentionally dropped by the router otherwise a single message will be flooded over to the entire internet.
+- Multicast -> Goes to interested multiple hosts. Think of a radio channel. The radio station sends the audio content to all the hosts who tuned in to that particular radio channel. The condition here that the receiver must request the traffic.
 
 ## Subnetting
 Managing a single network is difficult. What if there is a host down, how will a network engineer know unless he goes to each host one by one.
 To solve this problem the network designed divides a single network into smaller manageable networks called Subnets.
 
-to be continued...
+## IPv4
+To view your IP address you can use `ifconfig` command in UNIX based system and `ipconfig` in Windows. Usually in a typical setup we have different devices connected to internet via a Router. This is called a default gateway. The devices within a subnet can have communciation based on their private IP addresses. If they ever have to reach to internet it will go via router. The router or default gateway IP address can be checked via command `ip route`.
+
+The router does something called NAT (Network Address Translation). It knows which devices is trying to access which destination on internet. It takes those details, Masks the IP of itself as a source IP and reach to the internet. Upon response, it knows the original device who has requested the content, so it returns back the response to the device.
+
+To verity this part, I checked how my request will reach google in my OSX system.
+```
+$ route -n get www.google.com
+   route to: 216.239.38.120
+destination: default
+       mask: default
+    gateway: 192.168.0.1
+  interface: en0
+      flags: <UP,GATEWAY,DONE,STATIC,PRCLONING,GLOBAL>
+ recvpipe  sendpipe  ssthresh  rtt,msec    rttvar  hopcount      mtu     expire
+       0         0         0         0         0         0      1500         0
+```
+
+Here it tells me that in order to reach google, gateway is the the IP of my router.
+
+One more thing to hightlight here is that we have limited number of IPv4 addresses. If we assign a unique IP addresses to all the devices in the world, we will exhaust all the available addresses in no time. That is why the router and the NAT mechanism plays a very important role in utilizing the availbel IP addresses
+
+I am about to prove why there is such a limiatation of IPv4 addresses. To solve this we have to first understand the basic strucutre of IPv4 addresses. 
+
+The IP address usually looks like this `192.168.0.4` or `216.239.38.120`. We know that these are the decimal representation of IP addresses. In reality, the IPv4 address is a 32 bit sequence of 0s and 1s. For now lets park this question that why they have chose 32 bits in the first place.
+
+These 32 bits are divided into what we call and Octet. We take chunk of 8 bits. So in order to make 32 bits we multiply 8 bits into 4. That is why you see 4 parts in the decimal representation of IP addresses seperated by a dot (.)
+
+some example of how an IP address could look like in binary formats are 
+
+192.168.0.4 -> 11000000.10101000.00000000.00000100
+216.239.38.12 -> 11011000.11101111.00100110.00001100
+
+
+To be continued...
