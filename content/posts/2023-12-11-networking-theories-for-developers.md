@@ -26,16 +26,12 @@ The network layer is a postal company. It carries all the envolopes for a compan
 
 Once the envelopes are present in the company's mail room, the Transport layers kicks in. It knows the department (Ports and Protocols). It takes the envelope, see the port number (department) and route the envelopes to those deparatments.
 
-### Types Of IP traffic
+## Types Of IP traffic
 Hosts in networking means any connecting device to a certain network. This includes PC, printers, mobiles etc.
 
 - Unicast -> Goes to single destination host
 - Broadcast -> Goes to all hosts in on the subnet. It only works within the subnet. It is intentionally dropped by the router otherwise a single message will be flooded over to the entire internet.
 - Multicast -> Goes to interested multiple hosts. Think of a radio channel. The radio station sends the audio content to all the hosts who tuned in to that particular radio channel. The condition here that the receiver must request the traffic.
-
-## Subnetting
-Managing a single network is difficult. What if there is a host down, how will a network engineer know unless he goes to each host one by one.
-To solve this problem the network designed divides a single network into smaller manageable networks called Subnets.
 
 ## IPv4
 To view your IP address you can use `ifconfig` command in UNIX based system and `ipconfig` in Windows. Usually in a typical setup we have different devices connected to internet via a Router. This is called a default gateway. The devices within a subnet can have communciation based on their private IP addresses. If they ever have to reach to internet it will go via router. The router or default gateway IP address can be checked via command `ip route`.
@@ -66,9 +62,73 @@ The IP address usually looks like this `192.168.0.4` or `216.239.38.120`. We kno
 These 32 bits are divided into what we call and Octet. We take chunk of 8 bits. So in order to make 32 bits we multiply 8 bits into 4. That is why you see 4 parts in the decimal representation of IP addresses seperated by a dot (.)
 
 some example of how an IP address could look like in binary formats are 
-
+```
 192.168.0.4 -> 11000000.10101000.00000000.00000100
 216.239.38.12 -> 11011000.11101111.00100110.00001100
+```
+
+Now lets break down the limitation on the number of possible IPv4 addresses. We know that each part in an IPv4 address is 8 bits. Each bit can have either a value 0 or 1 which means there are 2 possiblities for each bit. By doin the maths we can say
+```
+8 bits means 2^8 (2 raised to the power of 8)= 256
+```
+This means that an octet can have maximum value 255 (start from 0 to 256). Now if we do this for the 3 remaining octects (Remember IPv4 has 4 octets) we will get some numbers like 
+```
+2^8.2^8.2^8.2^8
+```
+We can also write the above equation like
+```
+2^(8 x 4) or simply 2^32
+```
+When we explain the 2 ^ 32 we get a number approximately 4.3 billions.
+
+This concludes that the design that our ancestors has used to distribute IPv4 address has this limitation. This was not foreseen because initally the internet was designed to be used in corporates or schools etc. They did not realize that one day it will become a necessity of every household and every person
+
+## Subnetting
+Managing a single network is difficult. What if there is a host down, how will a network engineer know unless he goes to each host one by one.
+To solve this problem the network designed divides a single network into smaller manageable networks called Subnets.
+
+## Subnet Mask
+Before understanding subnet mask there is one point that is required to be understood is that how one device can communicate to another device.
+We know that if we want to communicate to a device in the same network or specifically in the same subnet, it can reach that device directly. But if those two devices are not in the same subnet, than the request will be router through a router / default gateway which I have explained above.
+
+Now the question that comes to mind is that how do the network identifies that the request is for the same subnet or differnt. To understand this we have to understand how the IPv4 address is constructed.
+
+Imagine that we have two hosts
+
+- 192.168.1.10
+- 192.168.1.20
+
+Now how do these two devices will know wether they are in same network or not. The answer is Subnet Mask. Just like IPv4 addresses, the subnet mask is also a 32 bit sequence of 1s and 0s. The condition is that the subnet mask always have contiguous 1s and 0s. We know that the highest number in an IPv4 address for an octet is 255 which have discussed above. The 1s in the subnet mask defines the network portion and the 0s represent the host portion. So in order to differentiate the network and host portions of the above two IPv4 addresses we must convert them to binary.
+
+> 192.168.1.10 -> 11000000.10101000.00000001.00001010
+> 192.168.1.20 -> 11000000.10101000.00000001.00000010
+
+Now consider that the subnet mask we have applied to this network is 255.255.255.0
+Again, the number 255 if converted to binary will result in `11111111` So the binary representation of this will be
+
+> 255.255.255.0 -> 11111111.11111111.11111111.00000000
+
+This shows that the first 3 octets of those ip addresses belongs to network portion and the last octet is host portion. Meaning that we are saying here that given this subnet mask, any device whose IPv4 address has first 3 octets same, it means they are on same subnet. In our example both  the ip addresses has `192.168.1` has the same values in first 3 octets.If one of these devices has any other value in the first 4 octets, this tells us that the devices are not in the same network and a default gateway must be used to communicate between them.
+
+In summary, when we apply a subnet mask to a ip address on a system. We tell the system that top x number of octets are representing the network portion.
+
+The subnet mask can also be defined in a / slash notation. for example 
+> 192.168.1.10 255.255.255.0 -> 11111111.11111111.11111111.00000000
+can also be written as 
+> 192.168.1.1/24
+
+It is simple as counting the number of consecutive 1s in the subnet mask Lets see few more examples.
+> 192.168.1.10 255.255.0.0 can be written as 192.168.1.1/16 -> This tells that the network portion is first 2 octets and last 2 are hosts portions
+> 192.168.1.10 255.0.0.0 can be written as 192.168.1.1/8 -> This tells that the network portion is first 1 octet and last 3 are hosts portions
+
+Another thing I have to remember is that in any subnet the 1st and last ip address is reserved. For example if I have a following network
+
+> 192.168.0.1/24 This means I can have IP addresses from 192.168.0.0 to 192.168.0.255 for the host devices. 
+
+But I cannot assign an IP address `192.168.0.0` or `192.168.0.255` to any hosts. The former is reserved for the network address and the latter is the broadcast address for this subnet. A broadcast address is used to send a packet to all connected hosts. If I send a packet to this broadcast address, All the hosts in this subnet will receive that packet. This is also discussed in start of this post.
 
 
-To be continued...
+
+
+
+
