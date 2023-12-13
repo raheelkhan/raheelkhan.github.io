@@ -99,31 +99,33 @@ Imagine that we have two hosts
 - 192.168.1.20
 
 Now how do these two devices will know wether they are in same network or not. The answer is Subnet Mask. Just like IPv4 addresses, the subnet mask is also a 32 bit sequence of 1s and 0s. The condition is that the subnet mask always have contiguous 1s and 0s. We know that the highest number in an IPv4 address for an octet is 255 which have discussed above. The 1s in the subnet mask defines the network portion and the 0s represent the host portion. So in order to differentiate the network and host portions of the above two IPv4 addresses we must convert them to binary.
-
-> 192.168.1.10 -> 11000000.10101000.00000001.00001010
-> 192.168.1.20 -> 11000000.10101000.00000001.00000010
+```
+192.168.1.10 -> 11000000.10101000.00000001.00001010
+192.168.1.20 -> 11000000.10101000.00000001.00000010
+```
 
 Now consider that the subnet mask we have applied to this network is 255.255.255.0
 Again, the number 255 if converted to binary will result in `11111111` So the binary representation of this will be
 
-> 255.255.255.0 -> 11111111.11111111.11111111.00000000
+```
+255.255.255.0 -> 11111111.11111111.11111111.00000000
+```
+
 
 This shows that the first 3 octets of those ip addresses belongs to network portion and the last octet is host portion. Meaning that we are saying here that given this subnet mask, any device whose IPv4 address has first 3 octets same, it means they are on same subnet. In our example both  the ip addresses has `192.168.1` has the same values in first 3 octets.If one of these devices has any other value in the first 4 octets, this tells us that the devices are not in the same network and a default gateway must be used to communicate between them.
 
 In summary, when we apply a subnet mask to a ip address on a system. We tell the system that top x number of octets are representing the network portion.
 
 The subnet mask can also be defined in a / slash notation. for example 
-> 192.168.1.10 255.255.255.0 -> 11111111.11111111.11111111.00000000
-can also be written as 
-> 192.168.1.1/24
+`192.168.1.10 255.255.255.0 -> 11111111.11111111.11111111.00000000`
+can also be written as `192.168.1.1/24`
 
 It is simple as counting the number of consecutive 1s in the subnet mask Lets see few more examples.
-> 192.168.1.10 255.255.0.0 can be written as 192.168.1.1/16 -> This tells that the network portion is first 2 octets and last 2 are hosts portions
-> 192.168.1.10 255.0.0.0 can be written as 192.168.1.1/8 -> This tells that the network portion is first 1 octet and last 3 are hosts portions
+`192.168.1.10 255.255.0.0` can be written as `192.168.1.1/16` -> This tells that the network portion is first 2 octets and last 2 are hosts portions
+`192.168.1.10 255.0.0.0` can be written as `192.16f.1.1/8` -> This tells that the network portion is first 1 octet and last 3 are hosts portions
 
 Another thing I have to remember is that in any subnet the 1st and last ip address is reserved. For example if I have a following network
-
-> 192.168.0.1/24 This means I can have IP addresses from 192.168.0.0 to 192.168.0.255 for the host devices. 
+`192.168.0.1/24` This means I can have IP addresses from `192.168.0.0` to `192.168.0.255` for the host devices. 
 
 But I cannot assign an IP address `192.168.0.0` or `192.168.0.255` to any hosts. The former is reserved for the network address and the latter is the broadcast address for this subnet. A broadcast address is used to send a packet to all connected hosts. If I send a packet to this broadcast address, All the hosts in this subnet will receive that packet. This is also discussed in start of this post.
 
